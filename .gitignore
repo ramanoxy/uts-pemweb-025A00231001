@@ -1,0 +1,11 @@
+# File sistem operasi
+.DS_Store
+Thumbs.db
+
+# Folder konfigurasi code editor
+.vscode/
+.idea/
+
+# File sementara
+*.log
+*.tmp
