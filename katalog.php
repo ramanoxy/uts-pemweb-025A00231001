@@ -1,6 +1,22 @@
 <?php
 
 declare(strict_types=1);
+
+require_once 'data.php';
+require_once 'functions.php';
+
+// Ambil parameter pengurutan dari URL (?urut=terdekat)
+$modeUrut = $_GET['urut'] ?? 'default';
+
+// Jika user memilih urut=terdekat, panggil fungsi urutkanTanggalTerdekat()
+$agendaTampil = $daftarAgenda;
+if ($modeUrut === 'terdekat') {
+    $agendaTampil = urutkanTanggalTerdekat($agendaTampil);
+}
+
+// Hitung ringkasan statistik otomatis dari data array
+$ringkasan = hitungRingkasanAgenda($daftarAgenda, $tanggalHariIni);
+$jumlahMendatang = $ringkasan['terbuka'] + $ringkasan['penuh'];
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -27,12 +43,16 @@ declare(strict_types=1);
             <p>Satu ruang untuk belajar dan bertemu. Pilih kegiatanmu, amankan kursimu, mulai langkah baru.</p>
 
             <article class="kotak">
-                <h3>Ringkasan Statistik Agenda</h3>
+                <h3>Ringkasan Statistik Agenda (Dihitung Otomatis)</h3>
                 <ul>
-                    <li>Total Agenda: <strong>8 Kegiatan</strong> (6 mendatang, 2 selesai)</li>
-                    <li>Pendaftaran Terbuka: <strong>4 Kegiatan</strong></li>
-                    <li>Kuota Penuh: <strong>2 Kegiatan</strong></li>
-                    <li>Total Kursi Tersisa: <strong>80 Kursi</strong></li>
+                    <li>
+                        Total Agenda: <strong><?= e((string) $ringkasan['total_agenda']) ?> Kegiatan</strong>
+                        (<?= e((string) $jumlahMendatang) ?> mendatang, <?= e((string) $ringkasan['selesai']) ?> selesai)
+                    </li>
+                    <li>Pendaftaran Terbuka: <strong><?= e((string) $ringkasan['terbuka']) ?> Kegiatan</strong></li>
+                    <li>Kuota Penuh: <strong><?= e((string) $ringkasan['penuh']) ?> Kegiatan</strong></li>
+                    <li>Kursi Tersisa (di Agenda Terbuka): <strong><?= e((string) $ringkasan['kursi_tersisa']) ?> Kursi</strong></li>
+                    <li>Total Seluruh Peserta Terdaftar: <strong><?= e((string) $ringkasan['total_peserta']) ?> Orang</strong></li>
                 </ul>
             </article>
         </section>
@@ -43,6 +63,9 @@ declare(strict_types=1);
                 <span>Urutkan tampilan: </span>
                 <a href="katalog.php?urut=terdekat" class="tombol">Tanggal Terdekat</a>
                 <a href="katalog.php" class="tombol">Urutan Default</a>
+                <p style="margin: 8px 0 0 0; font-size: 14px; color: #94a3b8;">
+                    Mode urutan saat ini: <strong><?= e($modeUrut === 'terdekat' ? 'Tanggal Terdekat' : 'Default') ?></strong>
+                </p>
             </div>
 
             <table>
@@ -55,6 +78,34 @@ declare(strict_types=1);
                         <th>Status</th>
                     </tr>
                 </thead>
+                <tbody>
+                    <?php foreach ($agendaTampil as $agenda) : ?>
+                        <?php
+                        $sisaKuota = hitungSisaKuota($agenda['kuota'], $agenda['peserta']);
+                        $status = tentukanStatusAgenda($agenda, $tanggalHariIni);
+                        ?>
+                        <tr>
+                            <td><?= e($agenda['tanggal']) ?></td>
+                            <td>
+                                <strong><?= e($agenda['nama']) ?></strong><br>
+                                <small><?= e($agenda['kategori']) ?> — <?= e($agenda['deskripsi']) ?></small>
+                            </td>
+                            <td>
+                                <?= e($agenda['waktu']) ?><br>
+                                <?= e($agenda['lokasi']) ?>
+                            </td>
+                            <td>
+                                <?= e((string) $agenda['peserta']) ?> / <?= e((string) $agenda['kuota']) ?> terisi<br>
+                                <small>(Sisa <?= e((string) $sisaKuota) ?> kursi)</small>
+                            </td>
+                            <td>
+                                <span class="badge <?= e($status['class']) ?>">
+                                    <?= e($status['label']) ?>
+                                </span>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
             </table>
         </section>
 
@@ -63,7 +114,7 @@ declare(strict_types=1);
             <article class="kotak">
                 <p><span class="badge terbuka">TERBUKA</span> — Kegiatan belum lewat dan kursi masih tersedia. Pendaftaran dapat dilakukan.</p>
                 <p><span class="badge penuh">PENUH</span> — Kegiatan belum lewat, tetapi tidak ada kursi tersisa. Pendaftaran ditutup.</p>
-                <p><span class="badge selesai">SELESAI</span> — Tanggal kegiatan sudah lewat. Pendaftaran berakhir.</p>
+                <p><span class="badge selesai">SELESAI</span> — Tanggal kegiatan sudah lewat (sebelum <?= e($tanggalHariIni) ?>). Pendaftaran berakhir.</p>
             </article>
         </section>
     </main>
