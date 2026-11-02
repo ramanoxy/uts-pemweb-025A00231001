@@ -1,6 +1,6 @@
 # Portal Profil & Katalog Agenda Kegiatan — JDG (Junior Developer Group)
 
-Proyek Mini UTS — Mata Kuliah  
+Proyek Mini UTS — Mata Kuliah Pemograman Web
 Program Studi Informatika · Fakultas Teknik · Tiga Serangkai University
 
 ## 1. Identitas Mahasiswa
@@ -45,7 +45,7 @@ Anda dapat menjalankan proyek ini menggunakan **PHP Built-in Web Server** maupun
 1. Pastikan PHP (minimal versi 8.0+) sudah terpasang di komputer Anda (`php -v`).
 2. Clone repositori ini dan masuk ke direktori proyek:
    ```bash
-   git clone https://github.com/username-anda/uts-pemweb-NIM.git
+   git clone https://github.com/username-anda/uts-pemweb-025A00231001.git
    cd uts-pemweb-NIM
    ```
 3. Jalankan server lokal bawaan PHP:
@@ -57,11 +57,11 @@ Anda dapat menjalankan proyek ini menggunakan **PHP Built-in Web Server** maupun
    - Halaman Agenda: `http://localhost:8000/katalog.php`
 
 ### Opsi B: Menggunakan XAMPP atau Laragon
-1. Clone atau salin folder `uts-pemweb-NIM` ke dalam direktori:
-   - **XAMPP:** `C:\xampp\htdocs\uts-pemweb-NIM`
-   - **Laragon:** `C:\laragon\www\uts-pemweb-NIM`
+1. Clone atau salin folder `uts-pemweb-025A00231001` ke dalam direktori:
+   - **XAMPP:** `C:\xampp\htdocs\uts-pemweb-025A00231001`
+   - **Laragon:** `C:\laragon\www\uts-pemweb-025A00231001`
 2. Nyalakan modul **Apache** pada Control Panel XAMPP atau klik **Start All** pada Laragon.
-3. Buka browser dan akses `http://localhost/uts-pemweb-NIM/index.php`.
+3. Buka browser dan akses `http://localhost/uts-pemweb-025A00231001/index.php`.
 
 ## 5. Daftar Fitur & Fungsi Buatan Sendiri (`functions.php`)
 
