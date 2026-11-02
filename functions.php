@@ -25,7 +25,6 @@ function hitungSisaKuota(int $kuota, int $peserta): int
 
 /**
  * 3. Fungsi buatan sendiri #2: Menentukan status kegiatan dengan percabangan if/elseif/else
- * Mengembalikan array berisi teks label dan nama class CSS untuk badge warna
  */
 function tentukanStatusAgenda(array $agenda, string $tanggalHariIni): array
 {
@@ -51,14 +50,11 @@ function tentukanStatusAgenda(array $agenda, string $tanggalHariIni): array
 
 /**
  * 4. Fungsi buatan sendiri #3: Menghitung ringkasan statistik agenda
- * Memakai 3 fungsi array bawaan PHP: count(), array_column(), dan array_sum()
+ * Memakai fungsi array bawaan: count(), array_column(), dan array_sum()
  */
 function hitungRingkasanAgenda(array $daftarAgenda, string $tanggalHariIni): array
 {
-    // Fungsi array bawaan #1: count() untuk menghitung jumlah total item agenda
     $totalAgenda = count($daftarAgenda);
-
-    // Fungsi array bawaan #2 & #3: array_column() dan array_sum() untuk menjumlahkan seluruh peserta
     $daftarPeserta = array_column($daftarAgenda, 'peserta');
     $totalPeserta = (int) array_sum($daftarPeserta);
 
@@ -91,8 +87,8 @@ function hitungRingkasanAgenda(array $daftarAgenda, string $tanggalHariIni): arr
 }
 
 /**
- * 5. Fungsi buatan sendiri #4: Mengurutkan agenda berdasarkan tanggal terdekat (dari paling awal)
- * Memakai fungsi array bawaan #4: usort()
+ * 5. Fungsi buatan sendiri #4: Mengurutkan agenda berdasarkan tanggal terdekat
+ * Memakai fungsi array bawaan: usort()
  */
 function urutkanTanggalTerdekat(array $daftarAgenda): array
 {
@@ -101,4 +97,23 @@ function urutkanTanggalTerdekat(array $daftarAgenda): array
     });
 
     return $daftarAgenda;
+}
+
+/**
+ * 6. Fungsi buatan sendiri #5: Menyaring (filter) agenda berdasarkan status
+ * Memakai fungsi array bawaan: array_filter()
+ */
+function filterStatusAgenda(array $daftarAgenda, string $statusFilter, string $tanggalHariIni): array
+{
+    if ($statusFilter === 'SEMUA') {
+        return $daftarAgenda;
+    }
+
+    return array_filter(
+        $daftarAgenda,
+        function (array $agenda) use ($statusFilter, $tanggalHariIni): bool {
+            $status = tentukanStatusAgenda($agenda, $tanggalHariIni);
+            return $status['label'] === $statusFilter;
+        }
+    );
 }

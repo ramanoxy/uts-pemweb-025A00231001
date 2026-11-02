@@ -5,16 +5,19 @@ declare(strict_types=1);
 require_once 'data.php';
 require_once 'functions.php';
 
-// Ambil parameter pengurutan dari URL (?urut=terdekat)
+// 1. Ambil parameter filter status dan pengurutan dari URL ($_GET)
+$filterStatus = strtoupper($_GET['status'] ?? 'SEMUA');
 $modeUrut = $_GET['urut'] ?? 'default';
 
-// Jika user memilih urut=terdekat, panggil fungsi urutkanTanggalTerdekat()
-$agendaTampil = $daftarAgenda;
+// 2. Jalankan filter status menggunakan fungsi buatan sendiri (array_filter)
+$agendaTampil = filterStatusAgenda($daftarAgenda, $filterStatus, $tanggalHariIni);
+
+// 3. Jika mode urut = terdekat, urutkan berdasarkan tanggal (usort)
 if ($modeUrut === 'terdekat') {
     $agendaTampil = urutkanTanggalTerdekat($agendaTampil);
 }
 
-// Hitung ringkasan statistik otomatis dari data array
+// 4. Hitung ringkasan statistik keseluruhan
 $ringkasan = hitungRingkasanAgenda($daftarAgenda, $tanggalHariIni);
 $jumlahMendatang = $ringkasan['terbuka'] + $ringkasan['penuh'];
 ?>
@@ -59,13 +62,40 @@ $jumlahMendatang = $ringkasan['terbuka'] + $ringkasan['penuh'];
 
         <section>
             <h2>Daftar Agenda &amp; Status Pendaftaran</h2>
+
+            <!-- Panel Filter Status & Pengurutan Tanggal -->
             <div class="kotak">
-                <span>Urutkan tampilan: </span>
-                <a href="katalog.php?urut=terdekat" class="tombol">Tanggal Terdekat</a>
-                <a href="katalog.php" class="tombol">Urutan Default</a>
-                <p style="margin: 8px 0 0 0; font-size: 14px; color: #94a3b8;">
-                    Mode urutan saat ini: <strong><?= e($modeUrut === 'terdekat' ? 'Tanggal Terdekat' : 'Default') ?></strong>
+                <p style="margin: 0 0 10px 0;">
+                    <strong>Filter Status:</strong>
+                    <a href="katalog.php?status=SEMUA&amp;urut=<?= e($modeUrut) ?>" class="tombol">
+                        Semua (<?= e((string) $ringkasan['total_agenda']) ?>)
+                    </a>
+                    <a href="katalog.php?status=TERBUKA&amp;urut=<?= e($modeUrut) ?>" class="tombol">
+                        Terbuka (<?= e((string) $ringkasan['terbuka']) ?>)
+                    </a>
+                    <a href="katalog.php?status=PENUH&amp;urut=<?= e($modeUrut) ?>" class="tombol">
+                        Penuh (<?= e((string) $ringkasan['penuh']) ?>)
+                    </a>
+                    <a href="katalog.php?status=SELESAI&amp;urut=<?= e($modeUrut) ?>" class="tombol">
+                        Selesai (<?= e((string) $ringkasan['selesai']) ?>)
+                    </a>
                 </p>
+
+                <p style="margin: 0 0 8px 0;">
+                    <strong>Urutkan Tampilan:</strong>
+                    <a href="katalog.php?status=<?= e($filterStatus) ?>&amp;urut=terdekat" class="tombol">
+                        Tanggal Terdekat
+                    </a>
+                    <a href="katalog.php?status=<?= e($filterStatus) ?>&amp;urut=default" class="tombol">
+                        Urutan Default
+                    </a>
+                </p>
+
+                <small style="color: #94a3b8;">
+                    Menampilkan <strong><?= e((string) count($agendaTampil)) ?></strong> agenda
+                    | Status: <strong><?= e($filterStatus) ?></strong>
+                    | Urutan: <strong><?= e($modeUrut === 'terdekat' ? 'Tanggal Terdekat' : 'Default') ?></strong>
+                </small>
             </div>
 
             <table>
@@ -79,32 +109,40 @@ $jumlahMendatang = $ringkasan['terbuka'] + $ringkasan['penuh'];
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($agendaTampil as $agenda) : ?>
-                        <?php
-                        $sisaKuota = hitungSisaKuota($agenda['kuota'], $agenda['peserta']);
-                        $status = tentukanStatusAgenda($agenda, $tanggalHariIni);
-                        ?>
+                    <?php if (count($agendaTampil) === 0) : ?>
                         <tr>
-                            <td><?= e($agenda['tanggal']) ?></td>
-                            <td>
-                                <strong><?= e($agenda['nama']) ?></strong><br>
-                                <small><?= e($agenda['kategori']) ?> — <?= e($agenda['deskripsi']) ?></small>
-                            </td>
-                            <td>
-                                <?= e($agenda['waktu']) ?><br>
-                                <?= e($agenda['lokasi']) ?>
-                            </td>
-                            <td>
-                                <?= e((string) $agenda['peserta']) ?> / <?= e((string) $agenda['kuota']) ?> terisi<br>
-                                <small>(Sisa <?= e((string) $sisaKuota) ?> kursi)</small>
-                            </td>
-                            <td>
-                                <span class="badge <?= e($status['class']) ?>">
-                                    <?= e($status['label']) ?>
-                                </span>
+                            <td colspan="5" style="text-align: center;">
+                                Tidak ada agenda kegiatan untuk status yang dipilih.
                             </td>
                         </tr>
-                    <?php endforeach; ?>
+                    <?php else : ?>
+                        <?php foreach ($agendaTampil as $agenda) : ?>
+                            <?php
+                            $sisaKuota = hitungSisaKuota($agenda['kuota'], $agenda['peserta']);
+                            $status = tentukanStatusAgenda($agenda, $tanggalHariIni);
+                            ?>
+                            <tr>
+                                <td><?= e($agenda['tanggal']) ?></td>
+                                <td>
+                                    <strong><?= e($agenda['nama']) ?></strong><br>
+                                    <small><?= e($agenda['kategori']) ?> — <?= e($agenda['deskripsi']) ?></small>
+                                </td>
+                                <td>
+                                    <?= e($agenda['waktu']) ?><br>
+                                    <?= e($agenda['lokasi']) ?>
+                                </td>
+                                <td>
+                                    <?= e((string) $agenda['peserta']) ?> / <?= e((string) $agenda['kuota']) ?> terisi<br>
+                                    <small>(Sisa <?= e((string) $sisaKuota) ?> kursi)</small>
+                                </td>
+                                <td>
+                                    <span class="badge <?= e($status['class']) ?>">
+                                        <?= e($status['label']) ?>
+                                    </span>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </tbody>
             </table>
         </section>
