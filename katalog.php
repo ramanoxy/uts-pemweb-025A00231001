@@ -5,19 +5,15 @@ declare(strict_types=1);
 require_once 'data.php';
 require_once 'functions.php';
 
-// 1. Ambil parameter filter status dan pengurutan dari URL ($_GET)
 $filterStatus = strtoupper($_GET['status'] ?? 'SEMUA');
 $modeUrut = $_GET['urut'] ?? 'default';
 
-// 2. Jalankan filter status menggunakan fungsi buatan sendiri (array_filter)
 $agendaTampil = filterStatusAgenda($daftarAgenda, $filterStatus, $tanggalHariIni);
 
-// 3. Jika mode urut = terdekat, urutkan berdasarkan tanggal (usort)
 if ($modeUrut === 'terdekat') {
     $agendaTampil = urutkanTanggalTerdekat($agendaTampil);
 }
 
-// 4. Hitung ringkasan statistik keseluruhan
 $ringkasan = hitungRingkasanAgenda($daftarAgenda, $tanggalHariIni);
 $jumlahMendatang = $ringkasan['terbuka'] + $ringkasan['penuh'];
 ?>
@@ -63,7 +59,6 @@ $jumlahMendatang = $ringkasan['terbuka'] + $ringkasan['penuh'];
         <section>
             <h2>Daftar Agenda &amp; Status Pendaftaran</h2>
 
-            <!-- Panel Filter Status & Pengurutan Tanggal -->
             <div class="kotak">
                 <p style="margin: 0 0 10px 0;">
                     <strong>Filter Status:</strong>

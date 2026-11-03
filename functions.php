@@ -2,17 +2,11 @@
 
 declare(strict_types=1);
 
-/**
- * 1. Fungsi keamanan output HTML (Wajib melewati htmlspecialchars)
- */
 function e(string $teks): string
 {
     return htmlspecialchars($teks, ENT_QUOTES, 'UTF-8');
 }
 
-/**
- * 2. Fungsi buatan sendiri #1: Menghitung sisa kursi kuota kegiatan
- */
 function hitungSisaKuota(int $kuota, int $peserta): int
 {
     $sisa = $kuota - $peserta;
@@ -23,9 +17,6 @@ function hitungSisaKuota(int $kuota, int $peserta): int
     return $sisa;
 }
 
-/**
- * 3. Fungsi buatan sendiri #2: Menentukan status kegiatan dengan percabangan if/elseif/else
- */
 function tentukanStatusAgenda(array $agenda, string $tanggalHariIni): array
 {
     $sisaKuota = hitungSisaKuota($agenda['kuota'], $agenda['peserta']);
@@ -48,10 +39,6 @@ function tentukanStatusAgenda(array $agenda, string $tanggalHariIni): array
     }
 }
 
-/**
- * 4. Fungsi buatan sendiri #3: Menghitung ringkasan statistik agenda
- * Memakai fungsi array bawaan: count(), array_column(), dan array_sum()
- */
 function hitungRingkasanAgenda(array $daftarAgenda, string $tanggalHariIni): array
 {
     $totalAgenda = count($daftarAgenda);
@@ -86,10 +73,6 @@ function hitungRingkasanAgenda(array $daftarAgenda, string $tanggalHariIni): arr
     ];
 }
 
-/**
- * 5. Fungsi buatan sendiri #4: Mengurutkan agenda berdasarkan tanggal terdekat
- * Memakai fungsi array bawaan: usort()
- */
 function urutkanTanggalTerdekat(array $daftarAgenda): array
 {
     usort($daftarAgenda, function (array $a, array $b): int {
@@ -99,10 +82,6 @@ function urutkanTanggalTerdekat(array $daftarAgenda): array
     return $daftarAgenda;
 }
 
-/**
- * 6. Fungsi buatan sendiri #5: Menyaring (filter) agenda berdasarkan status
- * Memakai fungsi array bawaan: array_filter()
- */
 function filterStatusAgenda(array $daftarAgenda, string $statusFilter, string $tanggalHariIni): array
 {
     if ($statusFilter === 'SEMUA') {

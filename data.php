@@ -2,10 +2,8 @@
 
 declare(strict_types=1);
 
-// Tanggal patokan hari ini untuk mengecek apakah kegiatan sudah lewat (SELESAI) atau belum
 $tanggalHariIni = '2026-10-28';
 
-// Data utama: Array multidimensi berisi 8 agenda kegiatan JDG
 $daftarAgenda = [
     [
         'nama' => 'Mulai dari React: komponen pertama',

@@ -1,4 +1,3 @@
-/* 1. Aturan Wajib Box Model */
 * {
     box-sizing: border-box;
 }
@@ -11,14 +10,12 @@ body {
     margin: 0;
 }
 
-/* 2. Kontainer Utama Terpusat (Dipakai di index.php & katalog.php) */
 .container {
     max-width: 900px;
     margin: 0 auto;
     padding: 0 16px;
 }
 
-/* 3. Header & Menu Navigasi */
 header {
     background-color: #1e293b;
     border-bottom: 2px solid #334155;
@@ -48,7 +45,6 @@ nav a.aktif {
     color: #ffffff;
 }
 
-/* 4. Kotak Konten / Card Sederhana (Dipakai di semua section) */
 section {
     margin-bottom: 28px;
 }
@@ -71,7 +67,6 @@ section {
     margin: 10px 0;
 }
 
-/* 5. Tombol & Tabel Agenda */
 .tombol {
     display: inline-block;
     background-color: #2563eb;
@@ -108,7 +103,6 @@ tr:hover {
     background-color: #263349;
 }
 
-/* 6. Label Status (Untuk Percabangan PHP) */
 .badge {
     padding: 4px 8px;
     border-radius: 4px;
@@ -132,7 +126,6 @@ tr:hover {
     color: #e2e8f0;
 }
 
-/* 7. Footer */
 footer {
     border-top: 1px solid #334155;
     padding: 16px 0;
